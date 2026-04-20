@@ -6,6 +6,7 @@ import Layout from './components/Layout/Layout';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
+import SettingsPage from './pages/Settings/SettingsPage';
 
 const App: React.FC = () => {
   return (
@@ -22,7 +23,7 @@ const App: React.FC = () => {
               <Route path="/" element={<DashboardPage />} />
               {/* Add more protected routes here */}
               <Route path="/products" element={<div>Products Page Placeholder</div>} />
-              <Route path="/settings" element={<div>Settings Page Placeholder</div>} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>
 

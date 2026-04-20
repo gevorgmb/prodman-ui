@@ -2,9 +2,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import apiClient from '../api/client';
 
 interface User {
-  id: string;
+  id: number;
+  name: string;
   email: string;
-  name?: string;
+  phone: string | null;
+  emailVerifiedAt: string | null;
+  phoneVerifiedAt: string | null;
+  emailVerification: boolean;
+  emailVerificationLocked: boolean;
+  phoneVerification: boolean;
+  phoneVerificationLocked: boolean;
 }
 
 interface AuthContextType {
@@ -15,6 +22,7 @@ interface AuthContextType {
   login: (token: string, user?: User) => void;
   register: (token: string, user?: User) => void;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,16 +32,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null); // Normally we might fetch user on mount if token exists
   const [isLoading, setIsLoading] = useState(true);
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/api/current-user');
+      setUser(response.data);
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    // Check if token is valid or fetch user profile if needed
     const storedToken = localStorage.getItem('auth_token');
     if (storedToken) {
       setToken(storedToken);
-      // For now, we'll assume the token is enough, but in a real app,
-      // we'd probably call /api/me here.
+      refreshUser();
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, []);
+  }, [refreshUser]);
 
   const login = useCallback((newToken: string, newUser?: User) => {
     localStorage.setItem('auth_token', newToken);
@@ -68,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     register,
     logout,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
