@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import apiClient from '../api/client';
+import { authApi } from '../api/services/auth.api';
+import { userApi } from '../api/services/user.api';
 
 interface User {
   id: number;
@@ -34,8 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = useCallback(async () => {
     try {
-      const response = await apiClient.get('/api/current-user');
-      setUser(response.data);
+      const data = await userApi.getCurrentUser();
+      setUser(data);
     } catch (error) {
       console.error('Failed to refresh user:', error);
     } finally {
@@ -67,7 +68,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = useCallback(async () => {
     try {
-      await apiClient.post('/api/logout');
+      await authApi.logout();
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
