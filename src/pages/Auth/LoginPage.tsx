@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import apiClient from '../../api/client';
+import { authApi } from '../../api/services/auth.api';
 import Button from '../../components/UI/Button';
 import Input from '../../components/UI/Input';
 import Card from '../../components/UI/Card';
@@ -35,8 +35,7 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await apiClient.post('/api/login', data);
-      const { token, user } = response.data;
+      const { token, user } = await authApi.login(data);
       login(token, user);
       navigate('/');
     } catch (err: any) {

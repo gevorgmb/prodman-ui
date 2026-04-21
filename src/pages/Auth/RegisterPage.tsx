@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import apiClient from '../../api/client';
+import { authApi } from '../../api/services/auth.api';
 import Button from '../../components/UI/Button';
 import Input from '../../components/UI/Input';
 import Card from '../../components/UI/Card';
@@ -41,13 +41,11 @@ const RegisterPage: React.FC = () => {
     setError(null);
     try {
       // API call to register
-      // Note: We're sending name, email, and password
-      const response = await apiClient.post('/api/register', {
+      const { token, user } = await authApi.register({
         name: data.name,
         email: data.email,
         password: data.password,
       });
-      const { token, user } = response.data;
       
       // Log the user in after successful registration
       authRegister(token, user);

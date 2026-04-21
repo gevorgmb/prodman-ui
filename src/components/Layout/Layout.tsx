@@ -1,11 +1,13 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Package, Settings, User } from 'lucide-react';
+import { LogOut, LayoutDashboard, Package, Settings, User, Home } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useApartments } from '../../context/ApartmentContext';
 import Button from '../UI/Button';
 
 const Layout: React.FC = () => {
   const { logout, user } = useAuth();
+  const { selectedApartment } = useApartments();
   const location = useLocation();
 
   const navItems = [
@@ -53,21 +55,45 @@ const Layout: React.FC = () => {
     <div style={{ display: 'flex' }}>
       {/* Sidebar */}
       <aside style={sidebarStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem', padding: '0 0.5rem' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '0.5rem',
-            backgroundColor: 'var(--primary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 'bold',
-          }}>
-            P
+        <div style={{ marginBottom: '2rem', padding: '0 0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '0.5rem',
+              backgroundColor: 'var(--primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 'bold',
+            }}>
+              P
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Product Manager</h2>
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Product Manager</h2>
+
+          {selectedApartment && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem',
+              backgroundColor: 'rgba(79, 70, 229, 0.05)',
+              borderRadius: 'var(--radius)',
+              border: '1px solid rgba(79, 70, 229, 0.1)',
+            }}>
+              <div style={{ color: 'var(--primary)' }}>
+                <Home size={18} />
+              </div>
+              <div style={{ overflow: 'hidden' }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', margin: 0, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.025em' }}>Active Apartment</p>
+                <h3 style={{ fontSize: '0.875rem', fontWeight: 600, margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  {selectedApartment.name}
+                </h3>
+              </div>
+            </div>
+          )}
         </div>
 
         <nav style={{ flex: 1 }}>
