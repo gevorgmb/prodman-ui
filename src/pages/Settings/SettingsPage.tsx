@@ -61,7 +61,7 @@ const SettingsPage: React.FC = () => {
     setMessage(null);
     const code = type === 'email' ? emailCode : phoneCode;
     try {
-      await apiClient.post(`/api/verify-${type}`, { code });
+      await apiClient.post(`/api/verify-${type}-code`, { code });
       setMessage({ type: 'success', text: `${type.charAt(0).toUpperCase() + type.slice(1)} verified successfully!` });
       if (type === 'email') setEmailCode('');
       else setPhoneCode('');
