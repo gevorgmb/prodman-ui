@@ -23,8 +23,4 @@ export const apartmentApi = {
     const response = await apiClient.delete(`/api/apartments/${id}`);
     return response.data;
   },
-  getRelatedApartments: async () => {
-    const response = await apiClient.get('/api/related-apartments');
-    return response.data;
-  },
 };

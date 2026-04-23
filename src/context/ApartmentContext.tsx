@@ -37,7 +37,7 @@ export const ApartmentProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!isAuthenticated) return;
     setIsLoading(true);
     try {
-      const { apartments: fetchedApartments } = await apartmentApi.getRelatedApartments();
+      const { apartments: fetchedApartments } = await apartmentApi.getApartments();
       setApartments(fetchedApartments);
 
       // Auto-selection logic
