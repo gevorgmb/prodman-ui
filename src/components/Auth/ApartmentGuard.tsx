@@ -4,13 +4,14 @@ import { AlertTriangle, ArrowRight } from 'lucide-react';
 import { useApartments } from '../../context/ApartmentContext';
 import Button from '../UI/Button';
 import Card from '../UI/Card';
+import { Home } from 'lucide-react';
 
 interface ApartmentGuardProps {
   children?: React.ReactNode;
 }
 
 const ApartmentGuard: React.FC<ApartmentGuardProps> = ({ children }) => {
-  const { selectedApartment, isLoading, apartments } = useApartments();
+  const { selectedApartment, isLoading, apartments, selectApartment } = useApartments();
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -63,7 +64,82 @@ const ApartmentGuard: React.FC<ApartmentGuardProps> = ({ children }) => {
               : 'You haven\'t added any apartments yet. You need at least one apartment to start managing products and viewing your dashboard.'}
           </p>
 
-          {!hasApartments && (
+          {hasApartments ? (
+            <div style={{ textAlign: 'left', marginBottom: '2rem' }}>
+              <p style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--muted-foreground)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Available Apartments
+              </p>
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {apartments.map((apt) => (
+                  <div
+                    key={apt.id}
+                    onClick={() => selectApartment(apt)}
+                    style={{
+                      padding: '1rem',
+                      borderRadius: 'var(--radius)',
+                      border: '1px solid var(--border)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--primary)';
+                      e.currentTarget.style.backgroundColor = 'rgba(79, 70, 229, 0.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--border)';
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                  >
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '0.5rem',
+                      backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                      color: 'var(--primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Home size={20} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <h4 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 600 }}>{apt.name}</h4>
+                        <span style={{
+                          padding: '0.125rem 0.375rem',
+                          backgroundColor: apt.isOwner ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                          color: apt.isOwner ? '#10b981' : '#3b82f6',
+                          borderRadius: '4px',
+                          fontSize: '0.625rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase'
+                        }}>
+                          {apt.isOwner ? 'Owner' : apt.role}
+                        </span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--muted-foreground)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '250px' }}>
+                        {apt.description || 'No description'}
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        selectApartment(apt);
+                      }}
+                      style={{ fontSize: '0.75rem', height: '28px' }}
+                    >
+                      Select
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
             <p style={{
               fontSize: '0.875rem',
               color: 'var(--primary)',
@@ -80,8 +156,9 @@ const ApartmentGuard: React.FC<ApartmentGuardProps> = ({ children }) => {
           <Button
             onClick={() => navigate('/settings')}
             style={{ width: '100%', gap: '0.75rem' }}
+            variant={hasApartments ? "ghost" : "primary"}
           >
-            Go to Apartments Settings <ArrowRight size={18} />
+            {hasApartments ? 'Manage Apartments' : 'Go to Apartments Settings'} <ArrowRight size={18} />
           </Button>
         </Card>
       </div>

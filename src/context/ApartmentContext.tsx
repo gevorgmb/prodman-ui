@@ -8,8 +8,10 @@ export interface Apartment {
   name: string;
   description: string;
   isDefault: boolean;
-  createdAt: string;
-  updatedAt: string;
+  isOwner: boolean;
+  role: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface ApartmentContextType {
@@ -35,8 +37,7 @@ export const ApartmentProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!isAuthenticated) return;
     setIsLoading(true);
     try {
-      const { data } = await apartmentApi.getApartments();
-      const fetchedApartments: Apartment[] = data;
+      const { apartments: fetchedApartments } = await apartmentApi.getRelatedApartments();
       setApartments(fetchedApartments);
 
       // Auto-selection logic
@@ -44,23 +45,39 @@ export const ApartmentProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         let nextSelected = selectedApartment;
 
         // If current selection is not in the new list, or no selection exists
-        const stillExists = selectedApartment && fetchedApartments.find(a => a.id === selectedApartment.id);
+        const stillExists = selectedApartment && fetchedApartments.find((a: Apartment) => a.id === selectedApartment.id);
+
         if (!stillExists) {
-          // Priority 1: Default apartment
-          const defaultApt = fetchedApartments.find(a => a.isDefault);
-          if (defaultApt) {
-            nextSelected = defaultApt;
+          // Priority 1: Own default apartment
+          const ownDefault = fetchedApartments.find((a: Apartment) => a.isOwner && a.isDefault);
+          if (ownDefault) {
+            nextSelected = ownDefault;
           } else {
-            // Priority 2: First available
-            nextSelected = fetchedApartments[0];
+            // Priority 2: Related where user is admin and marked as default
+            const adminDefault = fetchedApartments.find((a: Apartment) => a.role === 'admin' && a.isDefault);
+            if (adminDefault) {
+              nextSelected = adminDefault;
+            } else {
+              // Priority 3: Other related accounts (first available)
+              nextSelected = fetchedApartments[0];
+            }
           }
         } else {
           // Refresh the selected apartment data from the list
-          nextSelected = fetchedApartments.find(a => a.id === selectedApartment.id) || null;
+          nextSelected = fetchedApartments.find(
+            (a: Apartment) => a.id === selectedApartment.id
+          ) || null;
         }
 
-        if (nextSelected !== selectedApartment) {
-          selectApartment(nextSelected!);
+        if (
+          nextSelected
+          && (
+            !selectedApartment
+            || nextSelected.id !== selectedApartment.id
+            || JSON.stringify(nextSelected) !== JSON.stringify(selectedApartment)
+          )
+        ) {
+          selectApartment(nextSelected);
         }
       } else {
         setSelectedApartment(null);

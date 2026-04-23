@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Package, Settings, User, Home } from 'lucide-react';
+import { LogOut, LayoutDashboard, Package, Settings, User, Home, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useApartments } from '../../context/ApartmentContext';
 import Button from '../UI/Button';
@@ -13,6 +13,9 @@ const Layout: React.FC = () => {
   const navItems = [
     { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
     { name: 'Products', path: '/products', icon: <Package size={20} /> },
+    ...(selectedApartment && (selectedApartment.isOwner || selectedApartment.role === 'admin') 
+      ? [{ name: 'Apartment Users', path: '/apartment-users', icon: <Users size={20} /> }]
+      : []),
     { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
   ];
 

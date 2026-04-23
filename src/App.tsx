@@ -9,6 +9,7 @@ import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import SettingsPage from './pages/Settings/SettingsPage';
+import ApartmentUsersPage from './pages/ApartmentUsers/ApartmentUsersPage';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const App: React.FC = () => {
                 <Route element={<ApartmentGuard />}>
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/products" element={<div>Products Page Placeholder</div>} />
+                  <Route path="/apartment-users" element={<ApartmentUsersPage />} />
                 </Route>
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
