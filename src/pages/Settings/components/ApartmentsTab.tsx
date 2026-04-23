@@ -214,6 +214,7 @@ const ApartmentsTab: React.FC = () => {
                   <tr style={{ borderBottom: '1px solid var(--border)', textAlign: 'left' }}>
                     <th style={{ padding: '1rem', width: '50px' }}></th>
                     <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Name</th>
+                    <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Role</th>
                     <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Is Default</th>
                     <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Description</th>
                     <th style={{ padding: '1rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Created At</th>
@@ -243,6 +244,19 @@ const ApartmentsTab: React.FC = () => {
                       </td>
                       <td style={{ padding: '1rem', fontWeight: 500 }}>{apt.name}</td>
                       <td style={{ padding: '1rem' }}>
+                        <span style={{
+                          padding: '0.25rem 0.5rem',
+                          backgroundColor: apt.isOwner ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                          color: apt.isOwner ? '#10b981' : '#3b82f6',
+                          borderRadius: '9999px',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          textTransform: 'capitalize'
+                        }}>
+                          {apt.isOwner ? 'Owner' : apt.role}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem' }}>
                         {apt.isDefault && (
                           <span style={{
                             padding: '0.25rem 0.5rem',
@@ -259,32 +273,36 @@ const ApartmentsTab: React.FC = () => {
                       <td style={{ padding: '1rem', maxWidth: '300px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {apt.description}
                       </td>
-                      <td style={{ padding: '1rem' }}>{new Date(apt.createdAt).toLocaleDateString()}</td>
+                      <td style={{ padding: '1rem' }}>{apt.createdAt ? new Date(apt.createdAt).toLocaleDateString() : 'N/A'}</td>
                       <td style={{ padding: '1rem', textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', alignItems: 'center' }}>
-                          {!apt.isDefault && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => { e.stopPropagation(); handleSetDefault(apt); }} 
-                              title="Set as Default"
-                              style={{ color: 'var(--primary)', padding: '0.25rem' }}
-                            >
-                              <CheckCircle size={16} />
-                            </Button>
+                          {apt.isOwner && (
+                            <>
+                              {!apt.isDefault && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => { e.stopPropagation(); handleSetDefault(apt); }} 
+                                  title="Set as Default"
+                                  style={{ color: 'var(--primary)', padding: '0.25rem' }}
+                                >
+                                  <CheckCircle size={16} />
+                                </Button>
+                              )}
+                              <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleEdit(apt); }} title="Edit">
+                                <Edit2 size={16} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => { e.stopPropagation(); handleDelete(apt.id); }}
+                                title="Delete"
+                                style={{ color: '#ef4444' }}
+                              >
+                                <Trash2 size={16} />
+                              </Button>
+                            </>
                           )}
-                          <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); handleEdit(apt); }} title="Edit">
-                            <Edit2 size={16} />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => { e.stopPropagation(); handleDelete(apt.id); }}
-                            title="Delete"
-                            style={{ color: '#ef4444' }}
-                          >
-                            <Trash2 size={16} />
-                          </Button>
                         </div>
                       </td>
                     </tr>
