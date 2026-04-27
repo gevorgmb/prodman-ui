@@ -9,13 +9,26 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor to add the bearer token
+// Request interceptor to add the bearer token and apartment header
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const activeApartment = localStorage.getItem('active_apartment');
+    if (activeApartment) {
+      try {
+        const apartment = JSON.parse(activeApartment);
+        if (apartment && apartment.id) {
+          config.headers['Apartment'] = apartment.id;
+        }
+      } catch (e) {
+        console.error('Failed to parse active_apartment', e);
+      }
+    }
+
     return config;
   },
   (error) => {
