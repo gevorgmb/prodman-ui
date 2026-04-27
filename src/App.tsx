@@ -10,6 +10,9 @@ import RegisterPage from './pages/Auth/RegisterPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import SettingsPage from './pages/Settings/SettingsPage';
 import ApartmentUsersPage from './pages/ApartmentUsers/ApartmentUsersPage';
+import ProductsPage from './pages/Products/ProductsPage';
+import DepartmentsPage from './pages/Products/DepartmentsPage';
+import CategoriesPage from './pages/Products/CategoriesPage';
 
 const App: React.FC = () => {
   return (
@@ -26,7 +29,9 @@ const App: React.FC = () => {
               <Route element={<Layout />}>
                 <Route element={<ApartmentGuard />}>
                   <Route path="/" element={<DashboardPage />} />
-                  <Route path="/products" element={<div>Products Page Placeholder</div>} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/products/departments" element={<DepartmentsPage />} />
+                  <Route path="/products/categories" element={<CategoriesPage />} />
                   <Route path="/apartment-users" element={<ApartmentUsersPage />} />
                 </Route>
                 <Route path="/settings" element={<SettingsPage />} />

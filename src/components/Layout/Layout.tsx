@@ -10,12 +10,23 @@ const Layout: React.FC = () => {
   const { selectedApartment } = useApartments();
   const location = useLocation();
 
+  const isOwnerOrAdmin = selectedApartment && (selectedApartment.isOwner || selectedApartment.role === 'admin');
+
   const navItems = [
     { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
-    { name: 'Products', path: '/products', icon: <Package size={20} /> },
-    ...(selectedApartment && (selectedApartment.isOwner || selectedApartment.role === 'admin') 
-      ? [{ name: 'Apartment Users', path: '/apartment-users', icon: <Users size={20} /> }]
-      : []),
+    ...(selectedApartment && isOwnerOrAdmin ? [
+      {
+        name: 'Products',
+        path: '/products',
+        icon: <Package size={20} />,
+        children: [
+          { name: 'All Products', path: '/products' },
+          { name: 'Departments', path: '/products/departments' },
+          { name: 'Categories', path: '/products/categories' },
+        ]
+      },
+      { name: 'Apartment Users', path: '/apartment-users', icon: <Users size={20} /> }
+    ] : []),
     { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
   ];
 
@@ -100,17 +111,45 @@ const Layout: React.FC = () => {
         </div>
 
         <nav style={{ flex: 1 }}>
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              style={navLinkStyle(location.pathname === item.path)}
-              className="nav-link"
-            >
-              {item.icon}
-              {item.name}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isParentActive = !!(location.pathname === item.path ||
+              (item.children && item.children.some(child => location.pathname === child.path)));
+
+            return (
+              <div key={item.path}>
+                <Link
+                  to={item.path}
+                  style={navLinkStyle(isParentActive)}
+                  className="nav-link"
+                >
+                  {item.icon}
+                  {item.name}
+                </Link>
+
+                {item.children && isParentActive && (
+                  <div style={{ paddingLeft: '2.75rem', marginBottom: '0.5rem' }}>
+                    {item.children.map(child => (
+                      <Link
+                        key={child.path}
+                        to={child.path}
+                        style={{
+                          display: 'block',
+                          padding: '0.5rem 0',
+                          fontSize: '0.875rem',
+                          color: location.pathname === child.path ? 'var(--primary)' : 'var(--muted-foreground)',
+                          textDecoration: 'none',
+                          fontWeight: location.pathname === child.path ? 600 : 500,
+                          transition: 'color 0.2s ease',
+                        }}
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
 
         <div style={{
