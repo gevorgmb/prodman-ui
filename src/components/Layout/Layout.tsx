@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Package, Settings, User, Home, Users } from 'lucide-react';
+import { LogOut, LayoutDashboard, Package, Settings, User, Home, Users, ShoppingCart } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useApartments } from '../../context/ApartmentContext';
 import Button from '../UI/Button';
@@ -25,8 +25,9 @@ const Layout: React.FC = () => {
           { name: 'Categories', path: '/products/categories' },
         ]
       },
-      { name: 'Apartment Users', path: '/apartment-users', icon: <Users size={20} /> }
-    ] : []),
+          { name: 'Apartment Users', path: '/apartment-users', icon: <Users size={20} /> },
+          { name: 'Acquisitions', path: '/acquisitions', icon: <ShoppingCart size={20} /> }
+        ] : []),
     { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
   ];
 
